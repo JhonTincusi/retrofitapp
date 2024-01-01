@@ -1,4 +1,4 @@
-package com.example.appointmentsapp.ui.ui.gallery
+package com.example.appointmentsapp.ui.gallery
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

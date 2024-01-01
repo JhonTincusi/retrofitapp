@@ -1,4 +1,4 @@
-package com.example.appointmentsapp.ui.ui.gallery
+package com.example.appointmentsapp.ui.gallery
 
 import android.os.Bundle
 import android.view.LayoutInflater

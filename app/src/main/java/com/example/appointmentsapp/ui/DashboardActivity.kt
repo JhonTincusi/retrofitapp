@@ -1,7 +1,9 @@
 package com.example.appointmentsapp.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -13,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.appointmentsapp.R
 import com.example.appointmentsapp.databinding.ActivityDashboardBinding
+import com.example.appointmentsapp.util.PreferenceHelper
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -54,5 +57,29 @@ class DashboardActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_dashboard)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.btn_logout -> {
+                // Aquí implementas la lógica para cerrar sesión
+                logout()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+    private fun logout() {
+        // Lógic for clear  SharedPreferences
+        val prefs = PreferenceHelper.customPrefs(this, "MisPreferencias")
+        val editor = prefs.edit()
+        editor.remove("token") // o editor.putString("token", null) para limpiar el token de usuario
+        editor.apply()
+
+        // go to mainActivity
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }
