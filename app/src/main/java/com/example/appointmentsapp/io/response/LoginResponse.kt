@@ -1,10 +1,10 @@
 package com.example.appointmentsapp.io.response
 
-import com.example.appointmentsapp.model.User
+import com.example.appointmentsapp.model.Data
 
 data class LoginResponse(
     val status: Boolean,
-    val user: User,
-    val access: String
-
+    val data: Data,
+    val access: String,
+    val message: String
 )
