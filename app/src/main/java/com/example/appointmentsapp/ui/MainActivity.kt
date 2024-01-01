@@ -33,9 +33,8 @@ class MainActivity : AppCompatActivity() {
 
         val preferences = PreferenceHelper.defaultPrefs(this)
         //Condicion para saber si existe una sesion
-        //if (preferences["access", ""].contains(".")) //Al abrir la app por 1ra vez
-        if (preferences["session", false]) //Al abrir la app por 1ra vez
-            goToLogin()
+        if (preferences["session", ""].contains(".")) //Al abrir la app por 1ra vez
+            goToDashboard()
     }
 
     private fun goToDashboard() {
@@ -61,38 +60,27 @@ class MainActivity : AppCompatActivity() {
         val etUsername = findViewById<EditText>(R.id.et_username).text.toString()
         val etPassword = findViewById<EditText>(R.id.et_password).text.toString()
 
-        val call = apiService.postLogin(etUsername, etPassword)
-        call.enqueue(object: retrofit2.Callback<LoginResponse>{
+        val apiService = ApiService.create()
+        val loginRequest = ApiService.LoginRequest(username = etUsername, password = etPassword)
+        apiService.postLogin(loginRequest).enqueue(object :retrofit2.Callback<LoginResponse>{
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                val responseString = response.toString()
-                // Mostrar el valor completo de response en Logcat
-                Log.d("MainActivity", "Response: $responseString")
+                if (response.isSuccessful && response.body()?.status == true) {
+                    //createSessionPreference()
+                    Toast.makeText(applicationContext, "Bienvenido", Toast.LENGTH_SHORT).show()
+                    goToDashboard()
 
-                if (response.isSuccessful){
-                    val loginResponse = response.body()
-                    if (loginResponse == null) {
-                        Toast.makeText(applicationContext, "Se produjo un error en el servidor 1", Toast.LENGTH_SHORT).show()
-                        return
-                    }
-                    if (loginResponse.status){
-                        createSessionPreference() //loginResponse.access
-                        goToDashboard()
-                    } else {
-                        Toast.makeText(applicationContext, "Las credenciales son incorrectas", Toast.LENGTH_SHORT).show()
-                    }
-
-                }else{
-                    Toast.makeText(applicationContext, "Se produjo un error en el servidor 2", Toast.LENGTH_SHORT).show()
-
+                } else {
+                    Toast.makeText(applicationContext, "Se produjo un error en el servidor ", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                Toast.makeText(applicationContext, "Se produjo un error en el servidor 3", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Se produjo un error en el servidor ", Toast.LENGTH_SHORT).show()
 
             }
-
-
         })
+
+
+
     }
 }

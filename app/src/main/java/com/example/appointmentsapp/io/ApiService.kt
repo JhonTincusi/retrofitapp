@@ -7,13 +7,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import retrofit2.http.POST
 import retrofit2.http.Query
+import retrofit2.http.Body
 
 interface ApiService {
-    @POST(value = "authentication/")
-    fun postLogin(@Query(value = "username") username: String, @Query(value = "password") password: String):
-            Call<LoginResponse>
+    @POST("authentication/")
+    fun postLogin(@Body loginRequest: LoginRequest): Call<LoginResponse>
 
-    companion object Factory{
+
+    companion object Factory {
         private const val BASE_URL = "http://10.0.2.2:8000/api/"
         fun create(): ApiService {
             val retrofit = Retrofit.Builder()
@@ -23,4 +24,9 @@ interface ApiService {
             return retrofit.create(ApiService::class.java)
         }
     }
+
+    data class LoginRequest(
+        val username: String,
+        val password: String
+    )
 }

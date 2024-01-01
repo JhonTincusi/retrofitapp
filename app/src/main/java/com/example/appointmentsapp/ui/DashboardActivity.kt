@@ -1,9 +1,7 @@
 package com.example.appointmentsapp.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.widget.Button
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -15,8 +13,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.appointmentsapp.R
 import com.example.appointmentsapp.databinding.ActivityDashboardBinding
-import com.example.appointmentsapp.util.PreferenceHelper
-import com.example.appointmentsapp.util.PreferenceHelper.set
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -47,25 +43,8 @@ class DashboardActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-
-        var btnLogout = findViewById<Button>(R.id.btn_logout)
-        btnLogout.setOnClickListener{
-            clearSessionPreference()
-            goToLogin()
-        }
     }
 
-    private fun goToLogin(){
-        val i = Intent(this, MainActivity::class.java)
-        startActivity(i)
-        finish()
-    }
-
-    private fun clearSessionPreference() {
-        val preferences = PreferenceHelper.defaultPrefs(this)
-        preferences["session"] = false
-    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.dashboard, menu)
