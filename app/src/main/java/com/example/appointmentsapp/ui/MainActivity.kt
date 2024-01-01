@@ -3,6 +3,7 @@ package com.example.appointmentsapp.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -32,9 +33,9 @@ class MainActivity : AppCompatActivity() {
 
         val preferences = PreferenceHelper.defaultPrefs(this)
         //Condicion para saber si existe una sesion
-        if (preferences["access", ""].contains(".")) //Al abrir la app por 1ra vez
-            goToDashboard()
-
+        //if (preferences["access", ""].contains(".")) //Al abrir la app por 1ra vez
+        if (preferences["session", false]) //Al abrir la app por 1ra vez
+            goToLogin()
     }
 
     private fun goToDashboard() {
@@ -43,9 +44,16 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun createSessionPreference(access: String){
+    private fun goToLogin() {
+        var i = Intent(this, MainActivity::class.java)
+        createSessionPreference()
+        startActivity(i)
+        finish()
+    }
+
+    private fun createSessionPreference(){  //access: String
         val preferences = PreferenceHelper.defaultPrefs(this)
-        preferences["access"] = access
+        preferences["session"] = true
     }
 
     //Metod for validation with api, get id for form
@@ -56,6 +64,10 @@ class MainActivity : AppCompatActivity() {
         val call = apiService.postLogin(etUsername, etPassword)
         call.enqueue(object: retrofit2.Callback<LoginResponse>{
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                val responseString = response.toString()
+                // Mostrar el valor completo de response en Logcat
+                Log.d("MainActivity", "Response: $responseString")
+
                 if (response.isSuccessful){
                     val loginResponse = response.body()
                     if (loginResponse == null) {
@@ -63,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                         return
                     }
                     if (loginResponse.status){
-                        createSessionPreference(loginResponse.access)
+                        createSessionPreference() //loginResponse.access
                         goToDashboard()
                     } else {
                         Toast.makeText(applicationContext, "Las credenciales son incorrectas", Toast.LENGTH_SHORT).show()

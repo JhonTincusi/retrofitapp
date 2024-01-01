@@ -9,12 +9,12 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
-    @POST(value = "api/authentication/")
+    @POST(value = "authentication/")
     fun postLogin(@Query(value = "username") username: String, @Query(value = "password") password: String):
             Call<LoginResponse>
 
     companion object Factory{
-        private const val BASE_URL = "http://10.0.2.2:8000/"
+        private const val BASE_URL = "http://10.0.2.2:8000/api/"
         fun create(): ApiService {
             val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
