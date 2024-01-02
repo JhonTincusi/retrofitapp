@@ -36,12 +36,6 @@ class MainActivity : AppCompatActivity() {
         if (preferences["session", ""].contains("."))
             goToDashboard()
 
-        preferences.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
-            // This will be triggered whenever a preference value changes
-            val value = sharedPreferences.all[key]
-            Log.d("Preferences", "$key: $value")
-        }
-
     }
 
     private fun goToDashboard() {
@@ -57,10 +51,9 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun createSessionPreference(access: String, username: String){
+    private fun createSessionPreference(data: String){
         val preferences = PreferenceHelper.defaultPrefs(this)
-        preferences["access"] = access
-        preferences["username"] = username
+        preferences["Data"] = data
     }
 
     //Metod for validation with api, get id for form
@@ -75,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
                     if (loginResponse?.status == true && loginResponse.data != null) {
-                        createSessionPreference(loginResponse.data.access, etUsername)
+                        createSessionPreference(loginResponse.data.toString())
                         Toast.makeText(applicationContext, "Bienvenido", Toast.LENGTH_SHORT).show()
                         goToDashboard()
                     } else {
