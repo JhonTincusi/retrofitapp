@@ -70,10 +70,13 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
     private fun logout() {
+        //Show all preferences in LogCat
+        PreferenceHelper.showAllPreferences(this)
+
         // Lógic for clear  SharedPreferences
         val prefs = PreferenceHelper.customPrefs(this, "MisPreferencias")
         val editor = prefs.edit()
-        editor.remove("token") // o editor.putString("token", null) para limpiar el token de usuario
+        editor.clear().apply()
         editor.apply()
 
         // go to mainActivity

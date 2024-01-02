@@ -22,4 +22,10 @@
         android:name="com.example.appointmentsapp.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_preferences"
+        android:name="com.example.appointmentsapp.ui.preferences.PreferencesFragment"
+        android:label="@string/menu_preferences"
+        tools:layout="@layout/fragment_preferences" />
 </navigation>

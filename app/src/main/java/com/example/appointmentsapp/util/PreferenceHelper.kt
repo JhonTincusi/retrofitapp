@@ -3,6 +3,7 @@ package com.example.appointmentsapp.util
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import android.util.Log
 
 object PreferenceHelper {
 
@@ -44,5 +45,14 @@ object PreferenceHelper {
         Float::class -> getFloat(key, defaultValue as? Float ?: -1f) as T
         Long::class -> getLong(key, defaultValue as? Long ?: -1) as T
         else -> throw UnsupportedOperationException("Not yet implemented")
+    }
+
+    fun showAllPreferences(context: Context) {
+        val prefs = PreferenceHelper.defaultPrefs(context)
+        val allEntries = prefs.all
+
+        for ((key, value) in allEntries) {
+            Log.d("Preferences", "$key: $value")
+        }
     }
 }

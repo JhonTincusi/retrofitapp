@@ -3,7 +3,6 @@ package com.example.appointmentsapp.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -13,15 +12,14 @@ import com.example.appointmentsapp.io.response.LoginResponse
 import com.example.appointmentsapp.util.PreferenceHelper
 import com.example.appointmentsapp.util.PreferenceHelper.get
 import com.example.appointmentsapp.util.PreferenceHelper.set
+import com.example.appointmentsapp.util.PreferenceHelper.showAllPreferences
 import retrofit2.Call
 import retrofit2.Response
-import javax.security.auth.callback.Callback
 
 class MainActivity : AppCompatActivity() {
     private val apiService: ApiService by lazy {
         ApiService.create()
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -35,6 +33,9 @@ class MainActivity : AppCompatActivity() {
         //Condicion para saber si existe una sesion
         if (preferences["session", ""].contains("."))
             goToDashboard()
+
+        //Show all preferences in LogCat
+        showAllPreferences(this)
     }
 
     private fun goToDashboard() {
@@ -43,17 +44,17 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun goToLogin() { ////revisarrrrrr
+
+    private fun goToLogin() {
         var i = Intent(this, MainActivity::class.java)
         startActivity(i)
         finish()
     }
 
-    private fun createSessionPreference(access: String){
+    private fun createSessionPreference(access: String, username: String){
         val preferences = PreferenceHelper.defaultPrefs(this)
         preferences["access"] = access
-        Toast.makeText(applicationContext, ""+access, Toast.LENGTH_SHORT).show()
-
+        preferences["username"] = username
     }
 
     //Metod for validation with api, get id for form
@@ -65,11 +66,11 @@ class MainActivity : AppCompatActivity() {
         val loginRequest = ApiService.LoginRequest(username = etUsername, password = etPassword)
         apiService.postLogin(loginRequest).enqueue(object :retrofit2.Callback<LoginResponse>{
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                val loginResponse = response.body()
+                createSessionPreference(loginResponse!!.data.access, etUsername)
                 if (response.isSuccessful) {
-                    val loginResponse = response.body()
                     if (response.body()?.status == true){
                         Toast.makeText(applicationContext, "Bienvenido", Toast.LENGTH_SHORT).show()
-                        createSessionPreference(loginResponse!!.data.access)
                         goToDashboard()
                     }else{
                         Toast.makeText(applicationContext, "Se profujo un error en el servidor", Toast.LENGTH_SHORT).show()

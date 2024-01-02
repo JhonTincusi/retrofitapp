@@ -33,6 +33,7 @@ class PreferencesFragment : Fragment() {
         preferencesViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+
         return root
     }
 
