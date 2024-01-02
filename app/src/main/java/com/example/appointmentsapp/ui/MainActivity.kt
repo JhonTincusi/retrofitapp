@@ -51,9 +51,9 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun createSessionPreference(data: String){
+    private fun createSessionPreference(pref: String){
         val preferences = PreferenceHelper.defaultPrefs(this)
-        preferences["Data"] = data
+        preferences["Preferences"] = pref
     }
 
     //Metod for validation with api, get id for form
