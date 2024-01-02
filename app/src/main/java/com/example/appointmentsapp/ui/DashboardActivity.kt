@@ -2,6 +2,7 @@ package com.example.appointmentsapp.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import com.google.android.material.snackbar.Snackbar
@@ -70,19 +71,22 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
     private fun logout() {
-        //Show all preferences in LogCat
-        PreferenceHelper.showAllPreferences(this)
+        PreferenceHelper.clearPreferences(this)
 
-        // Lógic for clear  SharedPreferences
-        val prefs = PreferenceHelper.customPrefs(this, "MisPreferencias")
-        val editor = prefs.edit()
-        editor.clear().apply()
-        editor.apply()
-
-        // go to mainActivity
+        // Go to MainActivity
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
     }
+
+    //Show shared prefrenced with key volumen
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            PreferenceHelper.showAllPreferences(this)
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
 }

@@ -46,13 +46,21 @@ object PreferenceHelper {
         Long::class -> getLong(key, defaultValue as? Long ?: -1) as T
         else -> throw UnsupportedOperationException("Not yet implemented")
     }
-
+    fun clearPreferences(context: Context) {
+        val prefs = defaultPrefs(context)
+        prefs.edit().clear().apply()
+    }
     fun showAllPreferences(context: Context) {
         val prefs = PreferenceHelper.defaultPrefs(context)
         val allEntries = prefs.all
 
-        for ((key, value) in allEntries) {
-            Log.d("Preferences", "$key: $value")
+        if (allEntries.isEmpty()) {
+            Log.d("Preferences", "No hay preferencias guardadas.")
+        } else {
+            for ((key, value) in allEntries) {
+                Log.d("Preferences", "$key: $value")
+            }
         }
     }
+
 }

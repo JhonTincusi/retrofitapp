@@ -3,6 +3,8 @@ package com.example.appointmentsapp.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.KeyEvent
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -34,8 +36,12 @@ class MainActivity : AppCompatActivity() {
         if (preferences["session", ""].contains("."))
             goToDashboard()
 
-        //Show all preferences in LogCat
-        showAllPreferences(this)
+        preferences.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
+            // This will be triggered whenever a preference value changes
+            val value = sharedPreferences.all[key]
+            Log.d("Preferences", "$key: $value")
+        }
+
     }
 
     private fun goToDashboard() {
@@ -64,32 +70,38 @@ class MainActivity : AppCompatActivity() {
 
         val apiService = ApiService.create()
         val loginRequest = ApiService.LoginRequest(username = etUsername, password = etPassword)
-        apiService.postLogin(loginRequest).enqueue(object :retrofit2.Callback<LoginResponse>{
+        apiService.postLogin(loginRequest).enqueue(object : retrofit2.Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                val loginResponse = response.body()
-                createSessionPreference(loginResponse!!.data.access, etUsername)
                 if (response.isSuccessful) {
-                    if (response.body()?.status == true){
+                    val loginResponse = response.body()
+                    if (loginResponse?.status == true && loginResponse.data != null) {
+                        createSessionPreference(loginResponse.data.access, etUsername)
                         Toast.makeText(applicationContext, "Bienvenido", Toast.LENGTH_SHORT).show()
                         goToDashboard()
-                    }else{
-                        Toast.makeText(applicationContext, "Se profujo un error en el servidor", Toast.LENGTH_SHORT).show()
-                        return
+                    } else {
+                        // Handle the case where login is unsuccessful or the response is not as expected
+                        Toast.makeText(applicationContext, "Credenciales incorrectas o error en el servidor", Toast.LENGTH_SHORT).show()
                     }
-
-
                 } else {
-                    Toast.makeText(applicationContext, "Se produjo un error en el servidor ", Toast.LENGTH_SHORT).show()
+                    // Handle the case where the response is not successful
+                    Toast.makeText(applicationContext, "Se produjo un error en el servidor", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                Toast.makeText(applicationContext, "Se produjo un error en el servidor ", Toast.LENGTH_SHORT).show()
-
+                // Handle the case where the call to the server fails
+                Toast.makeText(applicationContext, "Se produjo un error en la conexión", Toast.LENGTH_SHORT).show()
             }
         })
-
-
-
     }
+
+    //Show shared prefrenced with key volumen
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            showAllPreferences(this)
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
 }
