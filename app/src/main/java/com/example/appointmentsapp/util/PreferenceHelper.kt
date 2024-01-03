@@ -65,7 +65,7 @@ object PreferenceHelper {
         }
 
         // Set value
-        val sharedPreferences = context.getSharedPreferences("UserLoginPrefs", Context.MODE_PRIVATE)
+        //val sharedPreferences = context.getSharedPreferences("UserLoginPrefs", Context.MODE_PRIVATE)
 
         /*
         val valorGuardado = sharedPreferences.getInt("id", -1)
