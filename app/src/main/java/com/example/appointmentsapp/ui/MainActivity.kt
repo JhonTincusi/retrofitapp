@@ -1,5 +1,6 @@
 package com.example.appointmentsapp.ui
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.widget.EditText
 import android.widget.Toast
 import com.example.appointmentsapp.R
 import com.example.appointmentsapp.io.ApiService
+import com.example.appointmentsapp.io.response.AuthorizationResponse
 import com.example.appointmentsapp.io.response.LoginResponse
 import com.example.appointmentsapp.util.PreferenceHelper
 import com.example.appointmentsapp.util.PreferenceHelper.get
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         val btnGoDashboard = findViewById<Button>(R.id.btn_go_to_dashboard)
         btnGoDashboard.setOnClickListener{
             performLogin()
+            fetchUserAuthorization()
         }
 
         val preferences = PreferenceHelper.defaultPrefs(this)
@@ -51,9 +54,9 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun createSessionPreference(pref: String){
-        val preferences = PreferenceHelper.defaultPrefs(this)
-        preferences["Preferences"] = pref
+    private fun createSessionPreference(pref: String, name: String){
+        val preferences = PreferenceHelper.customPrefs(this, name)
+        preferences["KeyPreferences"] = pref
     }
 
     //Metod for validation with api, get id for form
@@ -68,7 +71,7 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
                     if (loginResponse?.status == true && loginResponse.data != null) {
-                        createSessionPreference(loginResponse.data.toString())
+                        saveLoginData(applicationContext, loginResponse)
                         Toast.makeText(applicationContext, "Bienvenido", Toast.LENGTH_SHORT).show()
                         goToDashboard()
                     } else {
@@ -88,10 +91,51 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun fetchUserAuthorization() {
+        val apiService = ApiService.create()
+        val prefs = PreferenceHelper.defaultPrefs(this)
+        val authToken = "Bearer  + ${prefs["access",""]}"
+
+        val accessToken = prefs["access", ""]
+        Log.d("TAG", "access: $accessToken")
+
+
+        apiService.getUserAuthorization(authToken).enqueue(object : retrofit2.Callback<AuthorizationResponse> {
+            override fun onResponse(call: Call<AuthorizationResponse>, response: Response<AuthorizationResponse>) {
+                if (response.isSuccessful) {
+                    val authorizationResponse = response.body()
+                } else {
+                }
+            }
+
+            override fun onFailure(call: Call<AuthorizationResponse>, t: Throwable) {
+                // Manejar el caso de fallo en la llamada
+            }
+        })
+    }
+
+    fun saveLoginData(context: Context, loginResponse: LoginResponse) {
+
+        val sharedPreferences = context.getSharedPreferences("UserLoginPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("id", loginResponse.data.user.id)
+        editor.putString("last_login", loginResponse.data.user.last_login)
+        editor.putString("username", loginResponse.data.user.username)
+        editor.putString("first_name", loginResponse.data.user.first_name)
+        editor.putString("last_name", loginResponse.data.user.last_name)
+        editor.putString("email", loginResponse.data.user.email)
+        editor.putString("refresh", loginResponse.data.refresh)
+        editor.putString("access", loginResponse.data.access)
+        editor.putString("message", loginResponse.message)
+        editor.putBoolean("status", loginResponse.status)
+        editor.apply()
+    }
+
     //Show shared prefrenced with key volumen
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             showAllPreferences(this)
+
             return true
         }
         return super.onKeyDown(keyCode, event)

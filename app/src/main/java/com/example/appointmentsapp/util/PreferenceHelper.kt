@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.util.Log
+import com.example.appointmentsapp.model.User
+import com.google.gson.Gson
 
 object PreferenceHelper {
 
@@ -51,7 +53,7 @@ object PreferenceHelper {
         prefs.edit().clear().apply()
     }
     fun showAllPreferences(context: Context) {
-        val prefs = PreferenceHelper.defaultPrefs(context)
+        val prefs = PreferenceHelper.customPrefs(context, "UserLoginPrefs")
         val allEntries = prefs.all
 
         if (allEntries.isEmpty()) {
@@ -61,6 +63,8 @@ object PreferenceHelper {
                 Log.d("Preferences", "$key: $value")
             }
         }
+
     }
+
 
 }

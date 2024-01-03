@@ -1,5 +1,6 @@
 package com.example.appointmentsapp.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
@@ -64,14 +65,15 @@ class DashboardActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.btn_logout -> {
                 // Aquí implementas la lógica para cerrar sesión
-                logout()
+                logout(applicationContext)
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
-    private fun logout() {
-        PreferenceHelper.clearPreferences(this)
+    private fun logout(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("UserLoginPrefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().clear().apply()
 
         // Go to MainActivity
         val intent = Intent(this, MainActivity::class.java)
