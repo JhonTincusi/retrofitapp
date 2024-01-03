@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
         val btnGoDashboard = findViewById<Button>(R.id.btn_go_to_dashboard)
         btnGoDashboard.setOnClickListener{
             performLogin()
-            fetchUserAuthorization()
         }
 
         val preferences = PreferenceHelper.defaultPrefs(this)
@@ -74,6 +73,7 @@ class MainActivity : AppCompatActivity() {
                         saveLoginData(applicationContext, loginResponse)
                         Toast.makeText(applicationContext, "Bienvenido", Toast.LENGTH_SHORT).show()
                         goToDashboard()
+                        fetchUserAuthorization()
                     } else {
                         // Handle the case where login is unsuccessful or the response is not as expected
                         Toast.makeText(applicationContext, "Credenciales incorrectas o error en el servidor", Toast.LENGTH_SHORT).show()
@@ -89,23 +89,23 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Se produjo un error en la conexión", Toast.LENGTH_SHORT).show()
             }
         })
+
     }
 
     private fun fetchUserAuthorization() {
         val apiService = ApiService.create()
         val prefs = this.getSharedPreferences("UserLoginPrefs", Context.MODE_PRIVATE)
-        val access = prefs.getString("access", "Valor por defecto si clave3 no existe")
+        val access = prefs.getString("access", "Valor por defecto si token no existe")
         val authToken = "Bearer ${access}"
-        Log.d("Valuess: ", authToken.toString())
 
 
         apiService.getUserAuthorization(authToken).enqueue(object : retrofit2.Callback<AuthorizationResponse> {
             override fun onResponse(call: Call<AuthorizationResponse>, response: Response<AuthorizationResponse>) {
                 if (response.isSuccessful) {
                     val authorizationResponse = response.body()
-                    Log.d("Valuess: ", authorizationResponse.toString())
+                    Log.d("LOGCAT: ", authorizationResponse.toString())
                 } else {
-                    Log.d("Valuess: ", "No succes")
+                    Log.d("LOGCAT: ", "No succes")
                 }
             }
 

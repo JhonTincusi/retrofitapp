@@ -57,10 +57,10 @@ object PreferenceHelper {
         val allEntries = prefs.all
 
         if (allEntries.isEmpty()) {
-            Log.d("Preferences", "No hay preferencias guardadas.")
+            Log.d("LOGCAT", "No hay preferencias guardadas.")
         } else {
             for ((key, value) in allEntries) {
-                Log.d("Preferences", "$key: $value")
+                Log.d("LOGCAT", "$key: $value")
             }
         }
 
