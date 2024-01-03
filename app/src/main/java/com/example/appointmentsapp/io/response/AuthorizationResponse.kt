@@ -19,4 +19,5 @@ data class System(
 data class Module(
     val module_id: Int,
     val name: String,
+    val url: String,
 )

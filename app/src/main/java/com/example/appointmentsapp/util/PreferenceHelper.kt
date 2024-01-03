@@ -64,6 +64,14 @@ object PreferenceHelper {
             }
         }
 
+        // Set value
+        val sharedPreferences = context.getSharedPreferences("UserLoginPrefs", Context.MODE_PRIVATE)
+
+        /*
+        val valorGuardado = sharedPreferences.getInt("id", -1)
+        val valorGuardado2 = sharedPreferences.getString("username", "Valor por defecto si clave3 no existe")
+        Log.d("SharedPreferences", "Valor de clave3: $valorGuardado")
+        Log.d("SharedPreferences", "Valor de clave3: $valorGuardado2") */
     }
 
 

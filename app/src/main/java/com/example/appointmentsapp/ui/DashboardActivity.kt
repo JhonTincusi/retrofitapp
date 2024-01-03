@@ -72,6 +72,7 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
     private fun logout(context: Context) {
+        // Clear shared preferences
         val sharedPreferences = context.getSharedPreferences("UserLoginPrefs", Context.MODE_PRIVATE)
         sharedPreferences.edit().clear().apply()
 

@@ -93,18 +93,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchUserAuthorization() {
         val apiService = ApiService.create()
-        val prefs = PreferenceHelper.defaultPrefs(this)
-        val authToken = "Bearer  + ${prefs["access",""]}"
-
-        val accessToken = prefs["access", ""]
-        Log.d("TAG", "access: $accessToken")
+        val prefs = this.getSharedPreferences("UserLoginPrefs", Context.MODE_PRIVATE)
+        val access = prefs.getString("access", "Valor por defecto si clave3 no existe")
+        val authToken = "Bearer ${access}"
+        Log.d("Valuess: ", authToken.toString())
 
 
         apiService.getUserAuthorization(authToken).enqueue(object : retrofit2.Callback<AuthorizationResponse> {
             override fun onResponse(call: Call<AuthorizationResponse>, response: Response<AuthorizationResponse>) {
                 if (response.isSuccessful) {
                     val authorizationResponse = response.body()
+                    Log.d("Valuess: ", authorizationResponse.toString())
                 } else {
+                    Log.d("Valuess: ", "No succes")
                 }
             }
 
