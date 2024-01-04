@@ -17,6 +17,7 @@ import com.example.appointmentsapp.util.PreferenceHelper
 import com.example.appointmentsapp.util.PreferenceHelper.get
 import com.example.appointmentsapp.util.PreferenceHelper.set
 import com.example.appointmentsapp.util.PreferenceHelper.showAllPreferences
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Response
 
@@ -72,7 +73,6 @@ class MainActivity : AppCompatActivity() {
                     if (loginResponse?.status == true && loginResponse.data != null) {
                         saveLoginData(applicationContext, loginResponse)
                         Toast.makeText(applicationContext, "Bienvenido", Toast.LENGTH_SHORT).show()
-                        goToDashboard()
                         fetchUserAuthorization()
                     } else {
                         // Handle the case where login is unsuccessful or the response is not as expected
@@ -97,22 +97,26 @@ class MainActivity : AppCompatActivity() {
         val prefs = this.getSharedPreferences("UserLoginPrefs", Context.MODE_PRIVATE)
         val access = prefs.getString("access", "Valor por defecto si token no existe")
         val authToken = "Bearer ${access}"
-
-
         apiService.getUserAuthorization(authToken).enqueue(object : retrofit2.Callback<AuthorizationResponse> {
             override fun onResponse(call: Call<AuthorizationResponse>, response: Response<AuthorizationResponse>) {
                 if (response.isSuccessful) {
                     val authorizationResponse = response.body()
-                    Log.d("LOGCAT: ", authorizationResponse.toString())
+                    //Save that in sharedpreferences
+                    val gson = Gson()
+                    val authorizationResponseJson = gson.toJson(authorizationResponse)
+                    val pref = PreferenceHelper.customPrefs(applicationContext, "UserLoginPrefs")
+                    pref.set("AuthorizationResponse", authorizationResponseJson)
+                    goToDashboard()
                 } else {
                     Log.d("LOGCAT: ", "No succes")
                 }
             }
-
             override fun onFailure(call: Call<AuthorizationResponse>, t: Throwable) {
                 // Manejar el caso de fallo en la llamada
             }
         })
+
+
     }
 
     fun saveLoginData(context: Context, loginResponse: LoginResponse) {
