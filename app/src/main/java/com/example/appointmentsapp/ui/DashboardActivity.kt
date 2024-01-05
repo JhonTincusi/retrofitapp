@@ -54,8 +54,8 @@ class DashboardActivity : AppCompatActivity() {
                 val selectedModule = modules.find { it.module_id == menuItem.itemId }
                 when (selectedModule?.url) {
                     "/category" -> {
-                        // Navegar a Categorías
-                        Log.d("xdd","catt")
+                        val navController = findNavController(R.id.nav_host_fragment_content_dashboard)
+                        navController.navigate(R.id.nav_category)
                     }
                     "/subcategory" -> {
                         // Navegar a Subcategorías

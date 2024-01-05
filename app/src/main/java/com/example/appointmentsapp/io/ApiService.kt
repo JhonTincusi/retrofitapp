@@ -1,6 +1,7 @@
 package com.example.appointmentsapp.io
 
 import com.example.appointmentsapp.io.response.AuthorizationResponse
+import com.example.appointmentsapp.io.response.CategoryResponse
 import com.example.appointmentsapp.io.response.LoginResponse
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -16,6 +17,8 @@ interface ApiService {
     @GET("master/authorization/")
     fun getUserAuthorization(@Header("Authorization") authToken: String): Call<AuthorizationResponse>
 
+    @GET("warehouse/categories/filter/")
+    fun getCategories(): Call<CategoryResponse>
 
     companion object Factory {
         private const val BASE_URL = "http://10.0.2.2:8000/api/"
